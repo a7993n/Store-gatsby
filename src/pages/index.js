@@ -1,55 +1,40 @@
-import React from 'react';
-import styled from 'styled-components';
-import { graphql, useStaticQuery } from 'gatsby';
+import React from 'react'
+import {graphql, useStaticQuery} from 'gatsby'
+import get from 'lodash/get'
+import {Image, Header} from 'semantic-ui-react'
+import ProductList from '../components/ProductList'
+import SEO from '../components/SEO'
+import logo from '../images/ill-short-dark.svg'
+import Layout from '../components/Layout'
 
-import { SEO, Preview } from '@components'; 
-import { mixins } from '@styles';
-
-const StyledWrapper = styled.main`
-    ${mixins.gridTemplate};
-    ${mixins.fullHeight};
-    ${mixins.hiddenScrollbar};
-`;
-
-const IndexPage = () => {
-  const skus = useStaticQuery(query);
-
-  return (
-    <>
-      <SEO title='Sneaker Store' />
-        <StyledWrapper>
-            {skus.allStripeSku.edges.map(({ node: sku }) => {
-                const newSku = {
-                    sku: sku.id,
-                    name: sku.attributes.name,
-                    value: sku.price,
-                    currency: sku.currency,
-                    featuredImage: sku.localFiles[0].childImageSharp.fluid,
-                }
-                return <Preview key={sku.id} sku={newSku} />
-            })}
-        </StyledWrapper>
-    </>
-  )
-};
-
-const query = graphql`
-  {
-    allStripeSku {
+const StoreIndex = ({location}) => {
+  const data = useStaticQuery(graphql`
+    query IndexQuery {
+      site {
+        siteMetadata {
+          title
+        }
+      }
+      allMoltinProduct {
         edges {
           node {
             id
-            currency
-            price
-            attributes {
-              name
+            name
+            description
+            mainImageHref
+            meta {
+              display_price {
+                with_tax {
+                  amount
+                  currency
+                  formatted
+                }
+              }
             }
-            localFiles {
+            mainImage {
               childImageSharp {
-                fluid(maxWidth: 250) {
-                    src
-                    srcSet
-                    sizes
+                sizes(maxWidth: 600) {
+                  ...GatsbyImageSharpSizes
                 }
               }
             }
@@ -57,6 +42,34 @@ const query = graphql`
         }
       }
     }
-`
+  `)
 
-export default IndexPage;
+  const siteTitle = get(data, 'site.siteMetadata.title')
+  const products = get(data, 'allMoltinProduct.edges')
+  const filterProductsWithoutImages = products.filter(v => v.node.mainImageHref)
+  return (
+    <Layout location={location}>
+      <SEO title={siteTitle} />
+      <Header
+        as="h3"
+        icon
+        textAlign="center"
+        style={{
+          marginBottom: '2em',
+        }}
+      >
+        <Header.Content
+          style={{
+            width: '60%',
+            margin: '0 auto',
+          }}
+        >
+          <Image src={logo} alt="logo" />
+        </Header.Content>
+      </Header>
+      <ProductList products={filterProductsWithoutImages} />
+    </Layout>
+  )
+}
+
+export default StoreIndex

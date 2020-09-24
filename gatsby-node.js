@@ -1,53 +1,45 @@
-const path = require('path');
-const slugify = require('slugify');
+const Promise = require('bluebird')
+const path = require('path')
 
-exports.createPages = async ({ graphql, actions }) => {
-    const { createPage } = actions;
-    const productTemplate = path.resolve(`src/templates/product.js`);
+exports.createPages = ({ graphql, actions }) => {
+  const { createPage } = actions
 
-    const result = await graphql(`
-        {
-          allStripeSku {
-            edges {
-              node {
-                attributes {
-                  name
+  return new Promise((resolve, reject) => {
+    const productPageTemplate = path.resolve('src/templates/ProductPage.js')
+    resolve(
+      graphql(
+        `
+          {
+            allMoltinProduct {
+              edges {
+                node {
+                  id
+                }
               }
             }
           }
+        `
+      ).then(result => {
+        if (result.errors) {
+          console.log(result.errors)
+          reject(result.errors)
         }
-      }
-    `);
-
-    result.data.allStripeSku.edges.forEach(({ node: sku }) => {
-      const { name } = sku.attributes;
-      const slug = slugify(name, {
-        lower: true
-      });
-
-      createPage({
-        path: `products/${slug}`,
-        component: productTemplate,
-        context: {
-            name
-        }
+        result.data.allMoltinProduct.edges.forEach(edge => {
+          createPage({
+            path: `/product/${edge.node.id}/`,
+            component: productPageTemplate,
+            context: {
+              id: edge.node.id,
+            },
+          })
+        })
       })
-    })
+    )
+  })
 }
 
 exports.onCreateWebpackConfig = ({ actions }) => {
-    const { setWebpackConfig } = actions;
-    setWebpackConfig({
-        resolve: {
-        alias: {
-            '@components': path.resolve(__dirname, 'src/components'),
-            '@templates': path.resolve(__dirname, 'src/templates'),
-            '@pages': path.resolve(__dirname, 'src/pages'),
-            '@styles': path.resolve(__dirname, 'src/styles'),
-            '@assets': path.resolve(__dirname, 'src/assets'),
-            '@utils': path.resolve(__dirname, 'src/utils'),
-            '@config': path.resolve(__dirname, 'src/config'),
-        },
-      },
-    });
-};
+  actions.setWebpackConfig({
+    node: { fs: 'empty' },
+  })
+}

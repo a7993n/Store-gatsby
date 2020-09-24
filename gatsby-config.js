@@ -1,64 +1,75 @@
-require("dotenv").config({
+require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`,
 })
 
-const config = require('./src/config');
-
 module.exports = {
   siteMetadata: {
-    title: config.title,
-    description: config.description,
-    author: config.author
+    title: 'Gatsby starter ecommerce',
+    author: 'Parminder Sanghera',
+    description: 'A starter e-commerce site made using Gatsby.',
+    siteUrl: 'https://parmsang.github.io/gatsby-starter-ecommerce/',
   },
+  pathPrefix: '/gatsby-starter-ecommerce',
   plugins: [
-    `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-styled-components`,
-    `gatsby-plugin-transition-link`,
-    `gatsby-plugin-scroll-reveal`,
     {
-      resolve: `gatsby-plugin-layout`,
+      resolve: '@moltin/gatsby-source-moltin',
       options: {
-        component: require.resolve(`${__dirname}/src/components/layout.js`),
+        client_id:
+          process.env.MOLTIN_CLIENT_ID ||
+          'EdP3Gi1agyUF3yFS7Ngm8iyodLgbSR3wY4ceoJl0d2',
       },
-    },
-    {
-      resolve: `gatsby-plugin-prefetch-google-fonts`,
-      options: {
-        fonts: [{
-            family: `Montserrat`,
-            variants: [`400`, `700`, `900`]
-        }]
-      },
-    },
-    {
-      resolve: `gatsby-source-stripe`,
-      options: {
-        objects: ['Sku'],
-        secretKey: process.env.STRIPE_SECRET_KEY,
-        downloadFiles: true,
-      }
     },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        name: `images`,
-        path: `${__dirname}/src/assets/images`,
+        path: `${__dirname}/src/pages`,
+        name: 'pages',
+      },
+    },
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'img',
+        path: `${__dirname}/src/images`,
       },
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
-      resolve: `gatsby-plugin-manifest`,
+      resolve: `gatsby-plugin-google-analytics`,
       options: {
-        name: config.title,
-        short_name: config.shortTitle,
-        start_url: `/`,
-        background_color: config.colors.gray200,
-        theme_color: config.colors.gray100,
-        display: `minimal-ui`,
-        icon: 'src/assets/images/logo.png'
+        // trackingId: `ADD YOUR TRACKING ID HERE`,
       },
     },
-    'gatsby-plugin-offline'
+    {
+      resolve: `gatsby-plugin-nprogress`,
+      options: {
+        // Setting a color is optional.
+        color: `tomato`,
+        // Disable the loading spinner.
+        showSpinner: false,
+      },
+    },
+    'gatsby-plugin-styled-components',
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: 'Gatsby Shop App',
+        short_name: 'Shop App',
+        start_url: '/gatsby-starter-ecommerce/',
+        background_color: '#ffffff',
+        theme_color: '#ffffff',
+        display: 'minimal-ui',
+        icons: [
+          {
+            src: `/favicons/android-chrome-512x512.png`,
+            sizes: `512x512`,
+            type: `image/png`,
+          },
+        ],
+      },
+    },
+    `gatsby-plugin-offline`,
+    `gatsby-plugin-react-helmet`,
   ],
 }
