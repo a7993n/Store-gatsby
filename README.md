@@ -9,11 +9,11 @@
 ## Project Overview
 Sneaker-Store-Ecommerce is an ecommerce app created with Gatsby. When you enter the website, you can view items, and buy them through Stripe. To mantain cart I used custom hook use-shopping-cart. In cart you can finalize your order using checkout button, which redirect you to checkout.
 
-This is my second approach to create E-Commerce project with Stripe. First version is client side only, without any backend - after adding products to cart, you are being redirected to pre-build checkout provided by Stripe. This version has created checkout page using React Elements and you are able to finalize your order within origin website Both versions are linked down below.
+This is my first approach to create E-Commerce project with Stripe. This version is client side only, without any backend - after adding products to cart, you are being redirected to pre-build checkout provided by Stripe. Second version has created checkout page using React Elements and you are able to finalize your order within origin website Both versions are linked down below.
  
 <br>
 
-## Live Versions 📍
+## Live Version📍
 
 <div>
   <p>First Version - Client Side Only:</p>
@@ -48,4 +48,3 @@ Use Git to clone repository, then navigate into your new site’s directory and 
 ## License
 
 Sneaker Store Ecommerce is licensed under the <a href='https://opensource.org/licenses/mit-license.php'>MIT License.</a>
-"# Store-gatsby" 

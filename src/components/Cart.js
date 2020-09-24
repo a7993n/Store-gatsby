@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { navigate } from 'gatsby';
 
 import { CartPreview } from '@components';
 import { useShoppingCart } from 'use-shopping-cart';
@@ -43,7 +42,8 @@ const StyledGrid = styled.div`
 `;
 
 const Cart = ({ isOpen, setOpen }) => {
-    const { totalPrice, cartCount, clearCart, cartDetails } = useShoppingCart();
+    const [loading, setLoading] = useState(false);
+    const { totalPrice, redirectToCheckout, cartCount, clearCart, cartDetails } = useShoppingCart();
     const cartRef = useRef(null);
 
     const cart = [];
@@ -54,8 +54,8 @@ const Cart = ({ isOpen, setOpen }) => {
     };
 
     const handleCheckout = () => {
-        navigate('/checkout');
-        setOpen(false);
+        setLoading(true)
+        redirectToCheckout()
     };
     
     useEffect(() => {
@@ -84,7 +84,7 @@ const Cart = ({ isOpen, setOpen }) => {
                         <Paragraph>cart total:</Paragraph>
                         <Paragraph big bold>{totalPrice()}</Paragraph>
                     </StyledPriceWrapper>
-                    <Button border disabled={cartCount === 0} onClick={handleCheckout}>checkout</Button>
+                    <Button border disabled={loading} onClick={handleCheckout}>checkout</Button>
                 </StyledCheckout>
             </StyledGrid>
         </StyledWrapper>
